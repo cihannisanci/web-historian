@@ -16,23 +16,36 @@ exports.handleRequest = function (req, res) {
   // console.log(req.url);
   if (req.method === 'GET') {
     
+    var url = req.url === ('/') ? 'index.html' : req.url.slice(1);
+    var fileName = url === 'index.html' ? 'public/index.html' : 'archives/sites/' + url + '.html';
+
     if (req.url.search('css') !== -1) {
       
-      serveAssets.serveAssets(res, 'public/styles.css');
-      // fs.readFile('public/styles.css', function(err, content) {
-      //   defaultHeaders['Content-Type'] = 'text/css';
-      //   res.writeHead('200', defaultHeaders);         
-      //   res.end(content);
-      //});
+      //serveAssets.serveAssets(res, 'public/styles.css');
+      fs.readFile('public/styles.css', function(err, content) {
+        defaultHeaders['Content-Type'] = 'text/css';
+        res.writeHead('200', defaultHeaders);         
+        res.end(content);
+      });
 
     }
 
-    serveAssets.serveAssets(res, 'public/index.html');
-    fs.readFile( 'public/index.html', 'utf-8', function(err, content) {
+
+
+    //serveAssets.serveAssets(res, 'public/index.html');
+    fs.readFile( fileName, 'utf-8', function(err, content) {
+      if (err) {
+        res.writeHead(404, defaultHeaders);
+        res.end('We havent archived that');
+      }
       defaultHeaders['Content-Type'] = 'text/html';
       res.writeHead('200', defaultHeaders);
       res.end(content);
     });
+
+
+
+
   
   } else if (req.method === 'POST') {
     var message = '';
@@ -58,6 +71,12 @@ exports.handleRequest = function (req, res) {
             res.writeHead('200',defaultHeaders);
             res.end(loadingcontent);
           });
+
+          fs.appendFile('archives/sites.txt', message.split('=')[1] + ':', 'utf8', function(err) {
+            console.log(err);
+          });
+
+
         } 
       });
     });
