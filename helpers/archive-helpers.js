@@ -28,7 +28,17 @@ exports.initialize = function(pathsObj) {
 exports.readListOfUrls = function() {
 };
 
-exports.isUrlInList = function() {
+exports.isUrlInList = function(url,callbacktrue,callbackfalse) {
+  return 'aloha';
+  return fs.readFile('archives/sites.txt','utf-8', function(err, content) {
+    if (content.search(url.split('=')[1]) !== -1) {
+      return true;
+    } else {
+      return false;
+    } 
+  });
+
+
 };
 
 exports.addUrlToList = function() {
